@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AneriAI – Ask About Aneri Bhavsar</title>
+    <meta name="description" content="AneriAI is Aneri Bhavsar's personal AI assistant. Ask about her AI/ML engineering experience, skills, projects and availability.">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+
+        <!-- ── Header ── -->
+        <div class="chat-header">
+            <div class="header-content">
+                <div class="avatar"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></div>
+                <div class="header-info">
+                    <h1>Aneri AI</h1>
+                    <p>Personal AI Assistant &nbsp;·&nbsp; Aneri Bhavsar</p>
+                </div>
+            </div>
+            <div class="header-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Loading…</span>
+            </div>
+        </div>
+
+        <!-- ── Messages ── -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <div class="message-avatar"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></div>
+                    <div class="message-text" id="greetingMessage">
+                        <p>Hi there! <strong>Have a chat with Aneri AI to know more about me.</strong></p>
+                        <div class="suggested-questions">
+                            <button class="suggest-chip" onclick="askSuggestion(this)">What are your skills?</button>
+                            <button class="suggest-chip" onclick="askSuggestion(this)">Tell me about your projects</button>
+                            <button class="suggest-chip" onclick="askSuggestion(this)">What's your education?</button>
+                            <button class="suggest-chip" onclick="askSuggestion(this)">Are you available to hire?</button>
+                            <button class="suggest-chip" onclick="askSuggestion(this)">What's your Notice Period?</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="message-timestamp">Just now</div>
+            </div>
+        </div>
+
+        <!-- ── Input Area ── -->
+        <div class="chat-input-area">
+            <div class="input-container">
+                <textarea
+                    id="messageInput"
+                    placeholder="Ask me anything about Aneri…"
+                    rows="1"
+                    maxlength="500"
+                    aria-label="Your message"
+                ></textarea>
+                <button id="sendButton" class="send-btn" aria-label="Send message" title="Send">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="input-footer">
+                Everyone makes mistakes, including this AI. Make sure to double-check important information.
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
