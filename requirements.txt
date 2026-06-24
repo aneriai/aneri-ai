@@ -6,6 +6,6 @@ langchain-community==0.0.20
 chromadb==0.4.22
 pypdf==3.17.4
 sentence-transformers==2.2.2
-numpy==1.24.3
+numpy==1.26.4
 groq==0.4.2
 gunicorn==22.1.0
