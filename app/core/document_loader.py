@@ -13,6 +13,40 @@ class DocumentProcessor:
     CHUNK_SIZE    = 500
     CHUNK_OVERLAP = 60
 
+    def _split_text(self, text: str, chunk_size: int, overlap: int) -> List[str]:
+        """Simple recursive text splitter — no langchain dependency needed."""
+        separators = ["\n\n", "\n", ". ", " ", ""]
+        chunks = []
+
+        def split_with_sep(txt, seps):
+            if len(txt) <= chunk_size:
+                stripped = txt.strip()
+                if stripped:
+                    chunks.append(stripped)
+                return
+            sep = seps[0] if seps else ""
+            rest = seps[1:] if seps else []
+            parts = txt.split(sep) if sep else list(txt)
+            current = ""
+            for part in parts:
+                candidate = current + (sep if current else "") + part
+                if len(candidate) <= chunk_size:
+                    current = candidate
+                else:
+                    if current.strip():
+                        chunks.append(current.strip())
+                    # overlap
+                    overlap_text = current[-overlap:] if len(current) > overlap else current
+                    current = overlap_text + (sep if overlap_text else "") + part
+                    if len(current) > chunk_size and rest:
+                        split_with_sep(current, rest)
+                        current = ""
+            if current.strip():
+                chunks.append(current.strip())
+
+        split_with_sep(text, separators)
+        return chunks
+
     def load_resume(self) -> List[str]:
         """Load PDF and return list of clean text chunks."""
         if not os.path.exists(Config.RESUME_PATH):
@@ -25,7 +59,6 @@ class DocumentProcessor:
 
         try:
             from pypdf import PdfReader
-            from langchain.text_splitter import RecursiveCharacterTextSplitter
 
             reader_resume = PdfReader(Config.RESUME_PATH)
             pages_text = []
@@ -43,15 +76,8 @@ class DocumentProcessor:
             full_text = "\n".join(pages_text)
             logger.info(f"Loaded pages from PDF(s)")
 
-            splitter = RecursiveCharacterTextSplitter(
-                chunk_size    = self.CHUNK_SIZE,
-                chunk_overlap = self.CHUNK_OVERLAP,
-                separators    = ["\n\n", "\n", ". ", " ", ""],
-                length_function = len,
-            )
-
-            chunks = splitter.split_text(full_text)
-            chunks = [c.strip() for c in chunks if c.strip()]
+            # Simple recursive text splitter (no langchain needed)
+            chunks = self._split_text(full_text, self.CHUNK_SIZE, self.CHUNK_OVERLAP)
             logger.info(f"Split into {len(chunks)} chunks")
 
             # Cache chunks
