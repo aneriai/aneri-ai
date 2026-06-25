@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 api_bp = Blueprint('api', __name__)
 
-# Eagerly load RAG engine at startup so first request is not slow
 _rag_engine = None
 
 def get_rag_engine():
@@ -34,7 +33,7 @@ def health():
         return jsonify({
             "status": "healthy",
             "knowledge_base_size": stats.get('count', 0),
-            "model": "gemini-2.0-flash-exp"
+            "model": "all-MiniLM-L6-v2"
         })
     except Exception as e:
         logger.error(f"Health check error: {e}")
