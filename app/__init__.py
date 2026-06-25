@@ -22,6 +22,11 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 
+    from app.routes import api_bp, init_rag_engine
     app.register_blueprint(api_bp)
+
+    # Pre-load the RAG engine (model + ChromaDB) at startup
+    with app.app_context():
+        init_rag_engine()
 
     return app

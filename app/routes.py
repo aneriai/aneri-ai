@@ -6,15 +6,19 @@ logger = logging.getLogger(__name__)
 
 api_bp = Blueprint('api', __name__)
 
-# Lazy-load RAG engine to avoid import-time errors
+# Eagerly load RAG engine at startup so first request is not slow
 _rag_engine = None
 
 def get_rag_engine():
-    global _rag_engine
-    if _rag_engine is None:
-        from app.core.rag_engine import RAGEngine
-        _rag_engine = RAGEngine()
     return _rag_engine
+
+def init_rag_engine():
+    """Called once at app startup to warm up the model."""
+    global _rag_engine
+    from app.core.rag_engine import RAGEngine
+    logger.info("Pre-loading RAG engine at startup...")
+    _rag_engine = RAGEngine()
+    logger.info("RAG engine ready.")
 
 
 @api_bp.route('/')

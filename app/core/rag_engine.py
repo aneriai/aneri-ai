@@ -153,7 +153,7 @@ Tech Stack: Deep Learning | Computer Vision | Medical AI | Python | Chatbot
             else:
                 # 1. Retrieve relevant chunks
                 search_start = time.time()
-                relevant_docs = self.vector_store.similarity_search(query, k=5)
+                relevant_docs = self.vector_store.similarity_search(query, k=3)  # 3 is faster than 5
                 logger.info(f"Similarity search took {time.time() - search_start:.4f} seconds")
 
                 if not relevant_docs:

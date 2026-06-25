@@ -15,9 +15,9 @@ class Config:
 
     # ── Models ────────────────────────────────────────
     EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'all-MiniLM-L6-v2')
-    LLM_MODEL       = os.getenv('LLM_MODEL', 'llama-3.1-8b-instant')
+    LLM_MODEL       = os.getenv('LLM_MODEL', 'llama-3.1-8b-instant')  # fastest Groq model
     TEMPERATURE     = float(os.getenv('TEMPERATURE', 0.3))
-    MAX_TOKENS      = int(os.getenv('MAX_TOKENS', 800))
+    MAX_TOKENS      = int(os.getenv('MAX_TOKENS', 512))  # reduced for speed
 
     # ── Paths ─────────────────────────────────────────────
     BASE_DIR             = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
