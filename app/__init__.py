@@ -1,7 +1,6 @@
 import os
 import logging
 from flask import Flask
-from app.routes import api_bp
 
 logging.basicConfig(
     level=logging.INFO,
