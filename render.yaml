@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: aneri-ai
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt && python preload_model.py
+    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: LLM_MODEL
+        value: llama-3.1-8b-instant
+      - key: EMBEDDING_MODEL
+        value: all-MiniLM-L6-v2
+      - key: CHROMA_PERSIST_DIR
+        value: ./vector_db/chroma_db
+      - key: SENTENCE_TRANSFORMERS_HOME
+        value: /opt/render/project/src/.cache/sentence-transformers
+      - key: HF_HOME
+        value: /opt/render/project/src/.cache/huggingface
