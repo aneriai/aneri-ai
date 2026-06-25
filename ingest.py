@@ -26,7 +26,7 @@ def ingest():
         logger.error(f"Resume NOT found at: {Config.RESUME_PATH}")
         logger.error("Please place your PDF there and re-run.")
         sys.exit(1)
-    logger.info(f"✅ Resume found: {Config.RESUME_PATH}")
+    logger.info(f"Resume found: {Config.RESUME_PATH}")
 
     # ── 2. Load & chunk PDF ────────────────────────────────────
     from app.core.document_loader import DocumentProcessor
@@ -55,7 +55,7 @@ def ingest():
     # Delete existing collection to start fresh
     try:
         client.delete_collection(COLLECTION_NAME)
-        logger.info("🗑️  Deleted existing collection")
+        logger.info("Deleted existing collection")
     except Exception:
         pass
 
@@ -66,7 +66,7 @@ def ingest():
 
     logger.info("Generating embeddings (this may take ~30s)...")
     embeddings = embedder.encode(chunks, show_progress_bar=True).tolist()
-    logger.info(f"✅ Embeddings generated: {len(embeddings)} vectors")
+    logger.info(f"Embeddings generated: {len(embeddings)} vectors")
 
     # ── 5. Create collection & add documents ───────────────────
     collection = client.create_collection(
@@ -111,10 +111,10 @@ def ingest():
         logger.info(f"  Added batch {start}–{end}")
 
     total = collection.count()
-    logger.info(f"✅ ChromaDB collection '{COLLECTION_NAME}' now has {total} documents")
+    logger.info(f"ChromaDB collection '{COLLECTION_NAME}' now has {total} documents")
 
     # ── 6. Quick similarity test ───────────────────────────────
-    logger.info("\n🔍 Quick retrieval test: 'What are Aneri skills?'")
+    logger.info("\nQuick retrieval test: 'What are Aneri skills?'")
     q_embed = embedder.encode("What are Aneri skills?").tolist()
     results = collection.query(
         query_embeddings=[q_embed],
