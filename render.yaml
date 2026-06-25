@@ -4,11 +4,11 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    buildCommand: pip install -r requirements.txt && python preload_model.py
+    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload
     envVars:
       - key: GROQ_API_KEY
-        sync: false          # you'll paste this in Render dashboard
+        sync: false          # paste your key in Render dashboard → Environment
       - key: SECRET_KEY
         generateValue: true
       - key: FLASK_ENV

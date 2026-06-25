@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request
 import logging
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ def chat():
         })
 
     except Exception as e:
-        logger.error(f"Chat error: {e}")
+        logger.error(f"Chat error: {e}\n{traceback.format_exc()}")
         return jsonify({
             'error': str(e),
             'response': 'I encountered an error processing your question. Please try again.'
