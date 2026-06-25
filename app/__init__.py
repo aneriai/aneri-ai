@@ -24,8 +24,9 @@ def create_app():
     from app.routes import api_bp, init_rag_engine
     app.register_blueprint(api_bp)
 
-    # Pre-load the RAG engine (model + ChromaDB) at startup
-    with app.app_context():
-        init_rag_engine()
+    preload_rag = os.getenv('RAG_INIT_ON_STARTUP', 'true').lower() not in {'0', 'false', 'no'}
+    if preload_rag:
+        with app.app_context():
+            init_rag_engine()
 
     return app

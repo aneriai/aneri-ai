@@ -7,17 +7,32 @@ logger = logging.getLogger(__name__)
 api_bp = Blueprint('api', __name__)
 
 _rag_engine = None
+_rag_engine_error = None
 
 def get_rag_engine():
+    if _rag_engine is None:
+        init_rag_engine(raise_on_error=True)
     return _rag_engine
 
-def init_rag_engine():
+def init_rag_engine(raise_on_error=False):
     """Called once at app startup to warm up the model."""
-    global _rag_engine
+    global _rag_engine, _rag_engine_error
+    if _rag_engine is not None:
+        return _rag_engine
+
     from app.core.rag_engine import RAGEngine
     logger.info("Pre-loading RAG engine at startup...")
-    _rag_engine = RAGEngine()
-    logger.info("RAG engine ready.")
+    try:
+        _rag_engine = RAGEngine()
+        _rag_engine_error = None
+        logger.info("RAG engine ready.")
+        return _rag_engine
+    except Exception as e:
+        _rag_engine_error = str(e)
+        logger.error(f"RAG engine failed to initialize: {e}\n{traceback.format_exc()}")
+        if raise_on_error:
+            raise
+        return None
 
 
 @api_bp.route('/')
@@ -28,7 +43,14 @@ def index():
 @api_bp.route('/api/health')
 def health():
     try:
-        engine = get_rag_engine()
+        if _rag_engine is None:
+            return jsonify({
+                "status": "starting" if _rag_engine_error is None else "degraded",
+                "message": _rag_engine_error,
+                "model": "all-MiniLM-L6-v2"
+            }), 200
+
+        engine = _rag_engine
         stats = engine.vector_store.get_collection_stats()
         return jsonify({
             "status": "healthy",
@@ -37,7 +59,10 @@ def health():
         })
     except Exception as e:
         logger.error(f"Health check error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({
+            "status": "degraded",
+            "message": _rag_engine_error or str(e)
+        }), 200
 
 
 @api_bp.route('/api/chat', methods=['POST'])
@@ -54,7 +79,15 @@ def chat():
         if len(question) > 500:
             return jsonify({'error': 'Question too long (max 500 characters)'}), 400
 
-        engine = get_rag_engine()
+        try:
+            engine = get_rag_engine()
+        except Exception as e:
+            logger.error(f"RAG engine unavailable: {e}")
+            return jsonify({
+                'error': str(e),
+                'response': 'The AI service is not configured yet. Please check the Groq API key and deployment logs.'
+            }), 503
+
         result = engine.generate_response(question)
 
         return jsonify({

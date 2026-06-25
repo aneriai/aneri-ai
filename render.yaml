@@ -20,6 +20,8 @@ services:
         value: all-MiniLM-L6-v2
       - key: CHROMA_PERSIST_DIR
         value: ./vector_db/chroma_db
+      - key: RAG_INIT_ON_STARTUP
+        value: false
       - key: SENTENCE_TRANSFORMERS_HOME
         value: /opt/render/project/src/.cache/sentence-transformers
       - key: HF_HOME
