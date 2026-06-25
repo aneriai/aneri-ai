@@ -21,11 +21,14 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 
-    from app.routes import api_bp, init_rag_engine
+    from app.routes import api_bp, init_rag_engine, start_background_rag_init
     app.register_blueprint(api_bp)
 
+    rag_init_mode = os.getenv('RAG_INIT_MODE', '').lower()
     preload_rag = os.getenv('RAG_INIT_ON_STARTUP', 'false').lower() in {'1', 'true', 'yes'}
-    if preload_rag:
+    if rag_init_mode == 'background':
+        start_background_rag_init()
+    elif preload_rag:
         with app.app_context():
             init_rag_engine()
 

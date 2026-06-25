@@ -5,7 +5,7 @@ services:
     plan: free
     region: singapore
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt && python preload_model.py
-    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload
+    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1 --timeout 300
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION
@@ -22,6 +22,8 @@ services:
         value: ./vector_db/chroma_db
       - key: RAG_INIT_ON_STARTUP
         value: false
+      - key: RAG_INIT_MODE
+        value: background
       - key: SENTENCE_TRANSFORMERS_HOME
         value: /opt/render/project/src/.cache/sentence-transformers
       - key: HF_HOME
