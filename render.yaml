@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: aneri-ai
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false          # you'll paste this in Render dashboard
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: CHROMA_PERSIST_DIR
+        value: ./vector_db/chroma_db
+      - key: EMBEDDING_MODEL
+        value: all-MiniLM-L6-v2
+      - key: LLM_MODEL
+        value: llama-3.1-8b-instant
+      - key: TEMPERATURE
+        value: "0.3"
+      - key: MAX_TOKENS
+        value: "800"

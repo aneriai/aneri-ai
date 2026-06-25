@@ -19,9 +19,14 @@ class Config:
     TEMPERATURE     = float(os.getenv('TEMPERATURE', 0.3))
     MAX_TOKENS      = int(os.getenv('MAX_TOKENS', 800))
 
-    # ── Paths ─────────────────────────────────────────
+    # ── Paths ─────────────────────────────────────────────
     BASE_DIR             = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    CHROMA_PERSIST_DIR   = os.getenv('CHROMA_PERSIST_DIR', './vector_db/chroma_db')
+
+    # Always resolve CHROMA_PERSIST_DIR to an absolute path so it works on Render
+    _chroma_env          = os.getenv('CHROMA_PERSIST_DIR', './vector_db/chroma_db')
+    CHROMA_PERSIST_DIR   = _chroma_env if os.path.isabs(_chroma_env) \
+                           else os.path.join(BASE_DIR, _chroma_env.lstrip('./').lstrip('../'))
+
     RESUME_PATH          = os.path.join(BASE_DIR, 'data', 'raw', 'Resume_Aneri Bhavsar.pdf')
     KNOWLEDGE_BASE_PATH  = os.path.join(BASE_DIR, 'data', 'raw', 'Aneri_Knowledge_Base.pdf')
     PROCESSED_DATA_PATH  = os.path.join(BASE_DIR, 'data', 'processed', 'chunks.json')
